@@ -54,15 +54,6 @@
     widgetContainer.style.setProperty('--n8n-chat-background-color', config.style.backgroundColor);
     widgetContainer.style.setProperty('--n8n-chat-font-color', config.style.fontColor);
 
-    // Create chat toggle button
-    const toggleButton = document.createElement('button');
-    toggleButton.className = `chat-toggle${config.style.position === 'left' ? ' position-left' : ''}`;
-    toggleButton.innerHTML = `
-        <svg viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-        </svg>
-    `;
-
     const chatContainer = document.createElement('div');
     chatContainer.className = `chat-container${config.style.position === 'left' ? ' position-left' : ''}`;
 
@@ -87,7 +78,6 @@
     chatContainer.innerHTML = chatInterfaceHTML;
     
     widgetContainer.appendChild(chatContainer);
-    widgetContainer.appendChild(toggleButton);
     document.body.appendChild(widgetContainer);
 
     // Get DOM elements
@@ -166,10 +156,6 @@
                 textarea.value = '';
             }
         }
-    });
-    
-    toggleButton.addEventListener('click', () => {
-        chatContainer.classList.toggle('open');
     });
 
     const closeButtons = chatContainer.querySelectorAll('.close-button');
