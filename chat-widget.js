@@ -343,14 +343,6 @@
             <button class="close-button">×</button>
         </div>
         <div class="new-conversation">
-            <p class="welcome-text">${config.branding.welcomeText}</p>
-            <button class="new-chat-btn">
-                <svg class="message-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5L2.5 21.5l4.5-.838A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.476 0-2.886-.313-4.156-.878l-3.156.586.586-3.156A7.962 7.962 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
-                </svg>
-                Start New Chat
-            </button>
-            <p class="response-text">${config.branding.responseTimeText}</p>
         </div>
     `;
 
@@ -390,7 +382,6 @@
     const messagesContainer = chatContainer.querySelector('.chat-messages');
     const textarea = chatContainer.querySelector('textarea');
     const sendButton = chatContainer.querySelector('button[type="submit"]');
-    const newConversationDiv = chatContainer.querySelector('.new-conversation');
 
     function generateUUID() {
         return crypto.randomUUID();
@@ -417,21 +408,13 @@
             });
 
             const responseData = await response.json();
-            newConversationDiv.style.display = 'none';
+            chatContainer.querySelector('.brand-header').style.display = 'none';
+            chatContainer.querySelector('.new-conversation').style.display = 'none';
             chatInterface.classList.add('active');
-
-            let output = '';
-            if (Array.isArray(responseData)) {
-                output = responseData[0].output;
-            } else if (responseData && responseData.output) {
-                output = responseData.output;
-            } else {
-                output = 'No response from server.';
-            }
 
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chat-message bot';
-            botMessageDiv.textContent = output;
+            botMessageDiv.textContent = Array.isArray(responseData) ? responseData[0].output : responseData.output;
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
@@ -467,18 +450,9 @@
             
             const data = await response.json();
             
-            let output = '';
-            if (Array.isArray(data)) {
-                output = data[0].output;
-            } else if (data && data.output) {
-                output = data.output;
-            } else {
-                output = 'No response from server.';
-            }
-
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chat-message bot';
-            botMessageDiv.textContent = output;
+            botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
@@ -486,7 +460,8 @@
         }
     }
 
-    newChatBtn.addEventListener('click', startNewConversation);
+    // newChatBtn.addEventListener('click', startNewConversation);
+    startNewConversation(); // Call it immediately!
     
     sendButton.addEventListener('click', () => {
         const message = textarea.value.trim();
