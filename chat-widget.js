@@ -66,20 +66,6 @@
     const chatContainer = document.createElement('div');
     chatContainer.className = `chat-container${config.style.position === 'left' ? ' position-left' : ''}`;
 
-    // Create new conversation interface
-    const newConversationHTML = `
-        <div class="new-conversation">
-            <div class="welcome-text">${config.branding.welcomeText || 'How can we help you today?'}</div>
-            <button class="new-chat-btn">
-                <svg class="message-icon" viewBox="0 0 24 24">
-                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                </svg>
-                Start New Chat
-            </button>
-            <p class="response-text">${config.branding.responseTimeText || 'Typically replies within 5 minutes'}</p>
-        </div>
-    `;
-
     const chatInterfaceHTML = `
         <div class="chat-interface">
             <div class="brand-header">
@@ -98,14 +84,13 @@
         </div>
     `;
 
-    chatContainer.innerHTML = newConversationHTML + chatInterfaceHTML;
+    chatContainer.innerHTML = chatInterfaceHTML;
     
     widgetContainer.appendChild(chatContainer);
     widgetContainer.appendChild(toggleButton);
     document.body.appendChild(widgetContainer);
 
     // Get DOM elements
-    const newChatBtn = chatContainer.querySelector('.new-chat-btn');
     const chatInterface = chatContainer.querySelector('.chat-interface');
     const messagesContainer = chatContainer.querySelector('.chat-messages');
     const textarea = chatContainer.querySelector('textarea');
@@ -126,40 +111,6 @@
         messageDiv.textContent = message;
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    async function startNewConversation() {
-        try {
-            currentSessionId = generateUUID();
-            const data = [{
-                action: "loadPreviousSession",
-                sessionId: currentSessionId,
-                route: config.webhook.route,
-                metadata: {
-                    userId: ""
-                }
-            }];
-
-            const response = await fetch(config.webhook.url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            const botMessage = await handleApiResponse(response);
-            
-            // Update UI
-            chatContainer.querySelector('.brand-header').style.display = 'flex';
-            chatContainer.querySelector('.new-conversation').style.display = 'none';
-            chatInterface.classList.add('active');
-            
-            appendMessage(botMessage, 'bot');
-        } catch (error) {
-            console.error('Error starting conversation:', error);
-            appendMessage('Sorry, there was an error connecting to the chat service.', 'bot');
-        }
     }
 
     async function sendMessage(message) {
@@ -198,8 +149,6 @@
     }
 
     // Event Listeners
-    newChatBtn.addEventListener('click', startNewConversation);
-    
     sendButton.addEventListener('click', () => {
         const message = textarea.value.trim();
         if (message) {
