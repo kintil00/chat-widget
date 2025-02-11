@@ -461,7 +461,7 @@
     }
 
     // newChatBtn.addEventListener('click', startNewConversation);
-    startNewConversation(); // Call it immediately!
+    startNewConversation();
     
     sendButton.addEventListener('click', () => {
         const message = textarea.value.trim();
